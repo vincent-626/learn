@@ -1,38 +1,72 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { UserContext } from "../../contexts/UserContext";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext);
+
+  if (!!user) {
+    navigate("/account");
+    return null;
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (email === "" || password === "") {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    try {
+      await axios.post("/api/users/login", {
+        email,
+        password,
+      });
+      const { data } = await axios.get("/api/users/profile");
+      setUser(data);
+      alert("User logged in successfully");
+      navigate("/");
+    } catch (err) {
+      alert("Error logging in user");
+    }
+  };
 
   return (
-    <div className="w-full flex justify-center pt-8">
+    <div className="flex justify-center w-full pt-8">
       <div className="max-w-[1280px] w-full flex flex-col items-center">
-        <h1 className="mb-4 text-3xl text-primary font-semibold">Login</h1>
-        <form className="flex flex-col gap-2">
+        <h1 className="mb-4 text-3xl font-semibold text-primary">Login</h1>
+        <form
+          className="flex flex-col gap-2"
+          onSubmit={handleSubmit}
+        >
           <input
             placeholder="Your email"
             name="email"
-            type="text"
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="on"
-            className="border border-black rounded-sm px-4 py-2"
+            className="px-4 py-2 border border-black rounded-sm"
           />
           <input
             placeholder="Your password"
             name="password"
-            type="text"
+            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             autoComplete="on"
-            className="border border-black rounded-sm px-4 py-2"
+            className="px-4 py-2 border border-black rounded-sm"
           />
-          <button className="bg-primary hover:bg-primary_dark hover:text-gray-200 rounded-lg py-1 text-white">
+          <button className="py-1 text-white rounded-lg bg-primary hover:bg-primary_dark hover:text-gray-200">
             Login
           </button>
         </form>
-        <p className="text-sm text-gray-700 mt-2">
+        <p className="mt-2 text-sm text-gray-700">
           Don't have an account yet?{" "}
           <Link
             to="/register"

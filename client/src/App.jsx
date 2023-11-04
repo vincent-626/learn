@@ -1,14 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import axios from "axios";
 import Layout from "./components/Layout";
 import IndexPage from "./pages/index/IndexPage";
 import AccountPage from "./pages/account/AccountPage";
 import LoginPage from "./pages/account/LoginPage";
 import RegisterPage from "./pages/account/RegisterPage";
+import { UserContextProvider } from "./contexts/UserContext";
+
+axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.withCredentials = true;
 
 function App() {
   return (
-    <div>
-      <Router>
+    <Router>
+      <UserContextProvider>
         <Routes>
           <Route
             path="/"
@@ -32,8 +37,8 @@ function App() {
             />
           </Route>
         </Routes>
-      </Router>
-    </div>
+      </UserContextProvider>
+    </Router>
   );
 }
 
