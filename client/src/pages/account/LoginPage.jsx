@@ -23,11 +23,10 @@ function LoginPage() {
     }
 
     try {
-      await axios.post("/api/users/login", {
+      const { data } = await axios.post("/api/users/login", {
         email,
         password,
       });
-      const { data } = await axios.get("/api/users/profile");
       setUser(data);
       alert("User logged in successfully");
       navigate("/");

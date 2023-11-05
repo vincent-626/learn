@@ -51,7 +51,7 @@ app.post("/api/users/login", (req, res) => {
   connection.query(query, [email], (err, result) => {
     if (err) throw err;
     if (result.length === 0) {
-      res.json({ message: "User not found" });
+      res.status(401).json({ message: "User not found" });
     } else {
       const user = result[0];
       if (bcrypt.compareSync(password, user.password)) {
