@@ -37,7 +37,7 @@ function SearchBar(props) {
           </p>
         </button>
         <button
-          className="py-2 pr-1"
+          className="py-2 pl-[0.85rem] pr-3 border-l-2 rounded-full"
           onClick={() => {
             setClickSearch(true);
             setTarget("tutor");
@@ -46,7 +46,7 @@ function SearchBar(props) {
           Tutor
         </button>
         <button
-          className="py-2 pl-4 pr-2"
+          className="py-2 pl-2 pr-2"
           onClick={() => {
             setClickSearch(true);
             setTarget("learner");
