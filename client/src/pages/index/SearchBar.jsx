@@ -29,6 +29,7 @@ function SearchBar(props) {
           className={`bg-primary rounded-full flex justify-center items-center absolute text-white transition-all duration-200 hover:bg-primary_dark ${
             target === "tutor" && "right-20 w-16 h-10"
           } ${target === "learner" && "right-0 w-20 h-10"}`}
+          onClick={() => setClickSearch(true)}
         >
           <p>
             {target === "tutor" && "Tutor"}
@@ -37,13 +38,19 @@ function SearchBar(props) {
         </button>
         <button
           className="py-2 pr-1"
-          onClick={() => setTarget("tutor")}
+          onClick={() => {
+            setClickSearch(true);
+            setTarget("tutor");
+          }}
         >
           Tutor
         </button>
         <button
           className="py-2 pl-4 pr-2"
-          onClick={() => setTarget("learner")}
+          onClick={() => {
+            setClickSearch(true);
+            setTarget("learner");
+          }}
         >
           Learner
         </button>

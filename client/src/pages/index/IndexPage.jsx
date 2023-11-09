@@ -28,7 +28,7 @@ function IndexPage() {
 
       setClickSearch(false);
     }
-  }, [clickSearch]);
+  }, [clickSearch, target]);
 
   return (
     <div className="flex justify-center w-full">
