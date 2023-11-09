@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../../contexts/UserContext";
@@ -9,10 +9,11 @@ function LoginPage() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
 
-  if (!!user) {
-    navigate("/account");
-    return null;
-  }
+  useEffect(() => {
+    if (!!user) {
+      navigate("/account");
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,10 +28,24 @@ function LoginPage() {
         email,
         password,
       });
-      setUser(data);
+      const {
+        id: user_id,
+        name: user_name,
+        email: user_email,
+        isTutor: user_isTutor,
+        isLearner: user_isLearner,
+      } = data;
+      setUser({
+        id: user_id,
+        name: user_name,
+        email: user_email,
+        isTutor: user_isTutor,
+        isLearner: user_isLearner,
+      });
       alert("User logged in successfully");
       navigate("/");
     } catch (err) {
+      console.log(err);
       alert("Error logging in user");
     }
   };

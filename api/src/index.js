@@ -80,9 +80,93 @@ app.get("/api/users/profile", (req, res) => {
     const query = "SELECT * FROM Users WHERE id = ?";
     connection.query(query, [user.id], (err, result) => {
       if (err) throw err;
-      const { id, name, email } = result[0];
-      res.json({ id, name, email });
+      const { id, name, email, isTutor, isLearner } = result[0];
+      res.json({ id, name, email, isTutor, isLearner });
     });
+  });
+});
+
+app.post("/api/tutors/new", (req, res) => {
+  const { token } = req.cookies;
+  if (!token) {
+    res.json(null);
+  }
+
+  jwt.verify(token, jwtSecret, (err, user) => {
+    if (err) throw err;
+
+    const { user_id, skills, description, rate } = req.body;
+
+    const query =
+      "INSERT INTO Tutors (user_id, skills, description, rate) VALUES (?, ?, ?, ?)";
+    connection.query(
+      query,
+      [user_id, skills, description, rate],
+      (err, result) => {
+        if (err) throw err;
+
+        const query2 = "UPDATE Users SET isTutor = ? WHERE id = ?";
+        connection.query(query2, [1, user_id], (err2, result2) => {
+          if (err2) throw err2;
+          res.json({ tutorResult: result, userResult: result2 });
+        });
+      }
+    );
+  });
+});
+
+app.post("/api/learners/new", (req, res) => {
+  const { token } = req.cookies;
+  if (!token) {
+    res.json(null);
+  }
+
+  jwt.verify(token, jwtSecret, (err, user) => {
+    if (err) throw err;
+
+    const { user_id, skills, description, rate } = req.body;
+
+    const query =
+      "INSERT INTO Learners (user_id, skills, description, rate) VALUES (?, ?, ?, ?)";
+    connection.query(
+      query,
+      [user_id, skills, description, rate],
+      (err, result) => {
+        if (err) throw err;
+
+        const query2 = "UPDATE Users SET isLearner = ? WHERE id = ?";
+        connection.query(query2, [1, user_id], (err2, result2) => {
+          if (err2) throw err2;
+          res.json({ learnerResult: result, userResult: result2 });
+        });
+      }
+    );
+  });
+});
+
+app.get("/api/learners", (req, res) => {
+  let search = req.query.search;
+  search = "%" + search + "%";
+
+  const query =
+    "SELECT U.id, U.name, U.email, U.university, L.skills, L.description, L.rate FROM Learners L INNER JOIN Users U ON L.user_id = U.id WHERE L.skills LIKE ?";
+
+  connection.query(query, [search], (err, result) => {
+    if (err) throw err;
+    res.json(result);
+  });
+});
+
+app.get("/api/tutors", (req, res) => {
+  let search = req.query.search;
+  search = "%" + search + "%";
+
+  const query =
+    "SELECT U.id, U.name, U.email, U.university, T.skills, T.description, T.rate FROM Tutors T INNER JOIN Users U ON T.user_id = U.id WHERE T.skills LIKE ?";
+
+  connection.query(query, [search], (err, result) => {
+    if (err) throw err;
+    res.json(result);
   });
 });
 

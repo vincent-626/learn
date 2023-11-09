@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../../contexts/UserContext";
@@ -12,10 +12,11 @@ function RegisterPage() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
 
-  if (!!user) {
-    navigate("/");
-    return null;
-  }
+  useEffect(() => {
+    if (!!user) {
+      navigate("/account");
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

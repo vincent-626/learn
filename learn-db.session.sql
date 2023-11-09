@@ -6,6 +6,8 @@ CREATE TABLE Users(
     email VARCHAR(255) NOT NULL UNIQUE,
     university VARCHAR(255) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    isTutor BOOLEAN NOT NULL DEFAULT FALSE
+    isLearner BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- @block
@@ -29,3 +31,12 @@ CREATE TABLE Tutors(
     rate INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+-- @block
+SELECT * FROM Users;
+
+-- @block
+SELECT * FROM Learners;
+
+-- @block
+SELECT * FROM Tutors;

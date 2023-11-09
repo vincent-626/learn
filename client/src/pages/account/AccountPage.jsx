@@ -2,6 +2,7 @@ import { useContext } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import NewPosting from "./NewPosting";
 
 function AccountPage() {
   const { user, setUser } = useContext(UserContext);
@@ -22,9 +23,14 @@ function AccountPage() {
   return (
     <div className="flex justify-center w-full pt-8">
       <div className="max-w-[1280px] w-full flex flex-col items-center">
-        <p className="py-2">
-          {user.name} ({user.email})
-        </p>
+        {!!user ? (
+          <p className="py-2">
+            {user.name} ({user.email})
+          </p>
+        ) : (
+          ""
+        )}
+        <NewPosting />
         <button
           onClick={handleLogout}
           className="px-16 py-1 text-white rounded-lg bg-primary hover:bg-primary_dark hover:text-gray-200"
