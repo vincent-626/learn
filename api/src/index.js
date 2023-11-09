@@ -73,6 +73,7 @@ app.get("/api/users/profile", (req, res) => {
 
   if (!token) {
     res.json(null);
+    return;
   }
 
   jwt.verify(token, jwtSecret, (err, user) => {
