@@ -290,7 +290,8 @@ app.get("/api/learners", (req, res) => {
 
   connection.query(query, [search], (err, result) => {
     if (err) throw err;
-    res.json(result);
+    shuffleResult = result.sort((a, b) => 0.5 - Math.random());
+    res.json(shuffleResult);
   });
 });
 
@@ -303,7 +304,8 @@ app.get("/api/tutors", (req, res) => {
 
   connection.query(query, [search], (err, result) => {
     if (err) throw err;
-    res.json(result);
+    shuffleResult = result.sort((a, b) => 0.5 - Math.random());
+    res.json(shuffleResult);
   });
 });
 
