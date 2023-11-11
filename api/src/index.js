@@ -5,11 +5,15 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = process.env.JWT_SECRET;
 
 const app = express();
+app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -81,8 +85,8 @@ app.get("/api/users/profile", (req, res) => {
     const query = "SELECT * FROM Users WHERE id = ?";
     connection.query(query, [user.id], (err, result) => {
       if (err) throw err;
-      const { id, name, email, isTutor, isLearner } = result[0];
-      res.json({ id, name, email, isTutor, isLearner });
+      const { id, name, email, isTutor, isLearner, photo } = result[0];
+      res.json({ id, name, email, isTutor, isLearner, photo });
     });
   });
 });
@@ -116,6 +120,72 @@ app.post("/api/tutors/new", (req, res) => {
   });
 });
 
+app.get("/api/users/getTutor", (req, res) => {
+  const { token } = req.cookies;
+  if (!token) {
+    res.json(null);
+    return;
+  }
+
+  jwt.verify(token, jwtSecret, (err, user) => {
+    if (err) throw err;
+
+    const query = "SELECT * FROM Tutors WHERE user_id = ?";
+    connection.query(query, [user.id], (err, result) => {
+      if (err) throw err;
+      res.json(result);
+    });
+  });
+});
+
+app.put("/api/tutors/edit", (req, res) => {
+  const { token } = req.cookies;
+  if (!token) {
+    res.json(null);
+    return;
+  }
+
+  jwt.verify(token, jwtSecret, (err, user) => {
+    if (err) throw err;
+
+    const { user_id, skills, description, rate } = req.body;
+
+    const query =
+      "UPDATE Tutors SET skills = ?, description = ?, rate = ? WHERE user_id = ?";
+    connection.query(
+      query,
+      [skills, description, rate, user_id],
+      (err, result) => {
+        if (err) throw err;
+        res.json(result);
+      }
+    );
+  });
+});
+
+app.delete("/api/tutors/delete", (req, res) => {
+  const { token } = req.cookies;
+  if (!token) {
+    res.json(null);
+    return;
+  }
+
+  jwt.verify(token, jwtSecret, (err, user) => {
+    if (err) throw err;
+
+    const query = "DELETE FROM Tutors WHERE user_id = ?";
+    connection.query(query, [user.id], (err, result) => {
+      if (err) throw err;
+
+      const query2 = "UPDATE Users SET isTutor = ? WHERE id = ?";
+      connection.query(query2, [0, user.id], (err2, result2) => {
+        if (err2) throw err2;
+        res.json({ tutorResult: result, userResult: result2 });
+      });
+    });
+  });
+});
+
 app.post("/api/learners/new", (req, res) => {
   const { token } = req.cookies;
   if (!token) {
@@ -145,12 +215,78 @@ app.post("/api/learners/new", (req, res) => {
   });
 });
 
+app.get("/api/users/getLearner", (req, res) => {
+  const { token } = req.cookies;
+  if (!token) {
+    res.json(null);
+    return;
+  }
+
+  jwt.verify(token, jwtSecret, (err, user) => {
+    if (err) throw err;
+
+    const query = "SELECT * FROM Learners WHERE user_id = ?";
+    connection.query(query, [user.id], (err, result) => {
+      if (err) throw err;
+      res.json(result);
+    });
+  });
+});
+
+app.put("/api/learners/edit", (req, res) => {
+  const { token } = req.cookies;
+  if (!token) {
+    res.json(null);
+    return;
+  }
+
+  jwt.verify(token, jwtSecret, (err, user) => {
+    if (err) throw err;
+
+    const { user_id, skills, description, rate } = req.body;
+
+    const query =
+      "UPDATE Learners SET skills = ?, description = ?, rate = ? WHERE user_id = ?";
+    connection.query(
+      query,
+      [skills, description, rate, user_id],
+      (err, result) => {
+        if (err) throw err;
+        res.json(result);
+      }
+    );
+  });
+});
+
+app.delete("/api/learners/delete", (req, res) => {
+  const { token } = req.cookies;
+  if (!token) {
+    res.json(null);
+    return;
+  }
+
+  jwt.verify(token, jwtSecret, (err, user) => {
+    if (err) throw err;
+
+    const query = "DELETE FROM Learners WHERE user_id = ?";
+    connection.query(query, [user.id], (err, result) => {
+      if (err) throw err;
+
+      const query2 = "UPDATE Users SET isLearner = ? WHERE id = ?";
+      connection.query(query2, [0, user.id], (err2, result2) => {
+        if (err2) throw err2;
+        res.json({ learnerResult: result, userResult: result2 });
+      });
+    });
+  });
+});
+
 app.get("/api/learners", (req, res) => {
   let search = req.query.search;
   search = "%" + search + "%";
 
   const query =
-    "SELECT U.id, U.name, U.email, U.university, L.skills, L.description, L.rate FROM Learners L INNER JOIN Users U ON L.user_id = U.id WHERE L.skills LIKE ?";
+    "SELECT U.id, U.name, U.email, U.university, U.photo, L.skills, L.description, L.rate FROM Learners L INNER JOIN Users U ON L.user_id = U.id WHERE L.skills LIKE ?";
 
   connection.query(query, [search], (err, result) => {
     if (err) throw err;
@@ -163,11 +299,48 @@ app.get("/api/tutors", (req, res) => {
   search = "%" + search + "%";
 
   const query =
-    "SELECT U.id, U.name, U.email, U.university, T.skills, T.description, T.rate FROM Tutors T INNER JOIN Users U ON T.user_id = U.id WHERE T.skills LIKE ?";
+    "SELECT U.id, U.name, U.email, U.university, U.photo, T.skills, T.description, T.rate FROM Tutors T INNER JOIN Users U ON T.user_id = U.id WHERE T.skills LIKE ?";
 
   connection.query(query, [search], (err, result) => {
     if (err) throw err;
     res.json(result);
+  });
+});
+
+const storage = multer.diskStorage({
+  destination: "./public/uploads/",
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
+
+app.post("/api/users/image", upload.single("user-image"), (req, res) => {
+  const { token } = req.cookies;
+  if (!token) {
+    res.json(null);
+    return;
+  }
+
+  jwt.verify(token, jwtSecret, (err, user) => {
+    if (err) throw err;
+
+    const deleteQuery = "SELECT photo FROM Users WHERE id = ?";
+    connection.query(deleteQuery, [user.id], (err, result) => {
+      if (err) throw err;
+      if (result[0].photo) {
+        if (result[0].photo !== "default.png") {
+          fs.unlinkSync("./public/uploads/" + result[0].photo);
+        }
+      }
+    });
+
+    const query = "UPDATE Users SET photo = ? WHERE id = ?";
+    connection.query(query, [req.file.filename, user.id], (err, result) => {
+      if (err) throw err;
+      res.json({ photo: req.file.filename });
+    });
   });
 });
 

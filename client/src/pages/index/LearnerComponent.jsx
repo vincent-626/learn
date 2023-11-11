@@ -6,8 +6,13 @@ function LearnerComponent(props) {
   return (
     <div className="px-6 py-4 border rounded-md">
       <div className="flex h-full gap-4">
-        <div className="flex items-center justify-center w-12 h-12 overflow-hidden bg-gray-300 border rounded-full shrink-0">
-          <i className="text-4xl relative top-[0.3rem] text-white fa-solid fa-user"></i>
+        <div className="flex items-center justify-center w-12 h-12 overflow-hidden border rounded-full shrink-0">
+          {!!learner && !!learner.photo && (
+            <img
+              src={`http://localhost:3000/uploads/${learner?.photo}`}
+              alt=""
+            />
+          )}
         </div>
         <div className="flex flex-col justify-between h-full grow">
           <div>

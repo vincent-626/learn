@@ -34,6 +34,7 @@ function LoginPage() {
         email: user_email,
         isTutor: user_isTutor,
         isLearner: user_isLearner,
+        photo: user_photo,
       } = data;
       setUser({
         id: user_id,
@@ -41,6 +42,7 @@ function LoginPage() {
         email: user_email,
         isTutor: user_isTutor,
         isLearner: user_isLearner,
+        photo: user_photo,
       });
       alert("User logged in successfully");
       navigate("/");

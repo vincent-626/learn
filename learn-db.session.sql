@@ -8,6 +8,7 @@ CREATE TABLE Users(
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     isTutor BOOLEAN NOT NULL DEFAULT FALSE
     isLearner BOOLEAN NOT NULL DEFAULT FALSE
+    photo VARCHAR(255) NOT NULL DEFAULT 'default.png';
 );
 
 -- @block

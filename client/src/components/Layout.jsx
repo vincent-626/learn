@@ -1,11 +1,15 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 function Layout() {
   return (
-    <div className="min-h-screen max-w-[1640px]">
-      <Navbar />
-      <Outlet />
+    <div>
+      <div className="min-h-screen max-w-[1640px]">
+        <Navbar />
+        <Outlet />
+      </div>
+      <Footer />
     </div>
   );
 }

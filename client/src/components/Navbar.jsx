@@ -20,7 +20,14 @@ function Navbar() {
             className="flex items-center gap-1 py-6 pl-2 pr-4"
           >
             <div className="flex items-center justify-center w-8 h-8 overflow-hidden bg-gray-300 border rounded-full">
-              <i className="text-2xl relative top-[0.18rem] text-white fa-solid fa-user"></i>
+              {!!user ? (
+                <img
+                  src={`http://localhost:3000/uploads/${user?.photo}`}
+                  alt=""
+                />
+              ) : (
+                <i className="text-2xl relative top-[0.18rem] text-white fa-solid fa-user"></i>
+              )}
             </div>
             {!user && <p className="text-xl">Login</p>}
             {!!user && <p className="text-xl">{user.name.split(" ")[0]}</p>}

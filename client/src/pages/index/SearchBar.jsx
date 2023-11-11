@@ -13,7 +13,7 @@ function SearchBar(props) {
       ></button>
       <input
         id="search-bar"
-        placeholder="What do you want to learn?"
+        placeholder="What to learn?"
         className="mr-2 grow"
         value={search}
         onChange={(e) => setSearch(e.target.value)}

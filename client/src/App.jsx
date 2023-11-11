@@ -8,6 +8,8 @@ import RegisterPage from "./pages/account/RegisterPage";
 import { UserContextProvider } from "./contexts/UserContext";
 import NewLearner from "./pages/account/NewLearner";
 import NewTutor from "./pages/account/NewTutor";
+import EditTutor from "./pages/account/EditTutor";
+import EditLearner from "./pages/account/EditLearner";
 
 axios.defaults.baseURL = "http://localhost:3000";
 axios.defaults.withCredentials = true;
@@ -34,8 +36,16 @@ function App() {
               element={<NewTutor />}
             />
             <Route
+              path="/account/tutor/edit"
+              element={<EditTutor />}
+            />
+            <Route
               path="/account/learner/new"
               element={<NewLearner />}
+            />
+            <Route
+              path="/account/learner/edit"
+              element={<EditLearner />}
             />
             <Route
               path="/login"
