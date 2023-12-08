@@ -13,14 +13,16 @@ function IndexPage() {
   useEffect(() => {
     if (clickSearch) {
       if (target == "learner") {
-        axios.get("/api/learners", { params: { search } }).then((res) => {
-          setList(res.data);
-          setFixedTarget(target);
-        });
+        axios
+          .get("/api/search/learners", { params: { search } })
+          .then((res) => {
+            setList(res.data);
+            setFixedTarget(target);
+          });
       }
 
       if (target == "tutor") {
-        axios.get("/api/tutors", { params: { search } }).then((res) => {
+        axios.get("/api/search/tutors", { params: { search } }).then((res) => {
           setList(res.data);
           setFixedTarget(target);
         });
