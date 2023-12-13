@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const connection = require("../db/db");
+const { connection } = require("../db/db");
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = process.env.JWT_SECRET;

@@ -1,5 +1,6 @@
 require("dotenv").config();
 const mysql = require("mysql");
+const redis = require("redis");
 
 const connection = mysql.createConnection({
   host: "127.0.0.1",
@@ -10,7 +11,20 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
   if (err) throw err;
-  console.log("MySQL Database connected");
+  console.log("MySQL database connected");
 });
 
-module.exports = connection;
+const redisClient = redis.createClient();
+(async () => {
+  await redisClient.connect();
+})();
+
+redisClient.on("ready", () => {
+  console.log("Redis database connected");
+});
+
+redisClient.on("error", (err) => {
+  console.error(err);
+});
+
+module.exports = { connection, redisClient };

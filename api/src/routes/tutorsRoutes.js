@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const connection = require("../db/db");
+const { connection } = require("../db/db");
 
 const jwtSecret = process.env.JWT_SECRET;
 
